@@ -17,7 +17,7 @@ function Scene() {
         <Tree position={[0, 4, 0]} />
         <Tree position={[8, 4, 0]} />
         <Tree position={[-8, 4, 9]} />
-        <Player position={[0, 2, 15]} />
+        <Player position={[0, 1.75, 15]} />
         <Environment preset="sunset" />
       </Physics>
     </>
