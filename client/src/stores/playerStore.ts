@@ -13,11 +13,13 @@ interface PlayerState {
   getinventory: () => Promise<Record<string, number> | null>;
   updateInventory: (items: Record<string, number>) => void;
   hasInitiallyLoaded: boolean;
+  selectedHotbarSlot: number;
+  setSelectedHotbarSlot: (slot: number) => void;
 }
 
 const initialState: Omit<
   PlayerState,
-  "getPlayer" | "getinventory" | "updateInventory"
+  "getPlayer" | "getinventory" | "updateInventory" | "setSelectedHotbarSlot"
 > = {
   player: null,
   isPlayerLoading: false,
@@ -26,6 +28,7 @@ const initialState: Omit<
   isinventoryLoading: false,
   inventoryError: null,
   hasInitiallyLoaded: false,
+  selectedHotbarSlot: 0,
 };
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -86,5 +89,9 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     });
 
     set({ inventory: updatedInventory });
+  },
+
+  setSelectedHotbarSlot: (slot: number) => {
+    set({ selectedHotbarSlot: slot });
   },
 }));
