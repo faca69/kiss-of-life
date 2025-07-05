@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { KeyboardControls } from "@react-three/drei";
+
+import MainMenu from "@/components/menus/MainMenu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,20 +21,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <KeyboardControls
-      map={[
-        { name: "forward", keys: ["ArrowUp", "KeyW"] },
-        { name: "backward", keys: ["ArrowDown", "KeyS"] },
-        { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
-        { name: "rightward", keys: ["ArrowRight", "KeyD"] },
-        { name: "jump", keys: ["Space"] },
-      ]}
-    >
-      <html lang="en">
-        <body className={`${geistSans.variable} antialiased`}>
-          <ClerkProvider>{children}</ClerkProvider>
-        </body>
-      </html>
-    </KeyboardControls>
+    <html lang="en">
+      <body className={`${geistSans.variable} antialiased`}>
+        <ClerkProvider>
+          <MainMenu />
+          {children}
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

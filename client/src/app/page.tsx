@@ -2,13 +2,13 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useEffect, useState, useRef } from "react";
-import Scene from "@/components/Scene";
-import { PointerLockControls } from "@react-three/drei";
-import { InventoryModal } from "@/components/inventory/InventoryDIalog";
+import { KeyboardControls, PointerLockControls } from "@react-three/drei";
+import { InventoryModal } from "@/components/Inventory/InventoryDIalog";
 import Hotbar from "@/components/Hotbar/Hotbar";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayerStore } from "@/stores/playerStore";
 import { Perf } from "r3f-perf";
+import Scene from "@/components/Scene";
 
 export default function Game() {
   const phase = useGameStore((state) => state.phase);
@@ -73,23 +73,35 @@ export default function Game() {
   }
 
   return (
-    <main className="w-full h-screen bg-black relative">
-      {phase === "playing" && <div className="dot" />}
-      {canvasReady && <PointerLockControls />}
-
-      <InventoryModal />
-      <Hotbar />
-      <Perf />
-      <Canvas
-        ref={canvasRef}
-        shadows
-        camera={{ position: [0, 20, 50], rotation: [0, 0, 0], fov: 75 }}
-        onCreated={() => setCanvasReady(true)}
+    <>
+      <KeyboardControls
+        map={[
+          { name: "forward", keys: ["ArrowUp", "KeyW"] },
+          { name: "backward", keys: ["ArrowDown", "KeyS"] },
+          { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
+          { name: "rightward", keys: ["ArrowRight", "KeyD"] },
+          { name: "jump", keys: ["Space"] },
+        ]}
       >
-        <Suspense fallback={null}>
-          <Scene />
-        </Suspense>
-      </Canvas>
-    </main>
+        <main className="w-full h-screen bg-black relative">
+          {phase === "playing" && <div className="dot" />}
+
+          <InventoryModal />
+          <Hotbar />
+          <Canvas
+            ref={canvasRef}
+            shadows
+            camera={{ position: [0, 20, 50], rotation: [0, 0, 0], fov: 75 }}
+            onCreated={() => setCanvasReady(true)}
+          >
+            <Suspense fallback={null}>
+              {canvasReady && <PointerLockControls />}
+              <Perf />
+              <Scene />
+            </Suspense>
+          </Canvas>
+        </main>
+      </KeyboardControls>
+    </>
   );
 }
