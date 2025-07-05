@@ -14,7 +14,7 @@ interface PlayerProps {
   position: [number, number, number];
 }
 
-const SPEED = 15;
+const SPEED = 12;
 const JUMP_FORCE = 5.7;
 
 const velocity = new THREE.Vector3();
@@ -92,7 +92,7 @@ function Player({ position }: PlayerProps) {
       true
     );
 
-    if (forward || backward || leftward || rightward) {
+    if ((forward || backward || leftward || rightward) && isGrounded) {
       const currentTime = state.clock.elapsedTime;
       if (currentTime - lastStepTime > 0.4) {
         playRandomGrassSound();

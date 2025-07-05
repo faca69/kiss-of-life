@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Mesh, MeshStandardMaterial, Vector3 } from "three";
+import { Mesh, Vector3 } from "three";
 import CollectableWood from "./CollectableWood";
 import { RigidBody } from "@react-three/rapier";
 import { useSound } from "use-sound";
@@ -68,20 +68,6 @@ function Tree({ position }: TreeProps) {
       return () => clearTimeout(timer);
     }
   }, [chopped]);
-
-  if (health === 2) {
-    if (treeRef.current) {
-      const material = treeRef.current.material as MeshStandardMaterial;
-      material.color.set("#A0522D");
-    }
-  }
-
-  if (health === 1) {
-    if (treeRef.current) {
-      const material = treeRef.current.material as MeshStandardMaterial;
-      material.color.set("#CD853F");
-    }
-  }
 
   return (
     <>
