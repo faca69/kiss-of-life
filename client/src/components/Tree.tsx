@@ -1,21 +1,25 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Mesh, MeshStandardMaterial } from "three";
+import { Mesh, MeshStandardMaterial, Vector3 } from "three";
 import CollectableWood from "./CollectableWood";
 import { RigidBody } from "@react-three/rapier";
 import { useSound } from "use-sound";
 import { woodHit } from "@/lib/sfx";
 import { Clone, useGLTF } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 
 interface TreeProps {
   position: [number, number, number];
 }
 
+const MAX_CLICK_DISTANCE = 5;
+
 function Tree({ position }: TreeProps) {
   const tree = useGLTF("/models/tree.gltf");
   const MAX_HEALTH = 3;
   const treeRef = useRef<Mesh>(null);
+  const { camera } = useThree();
 
   const [play] = useSound(woodHit, { volume: 0.5 });
   const [health, setHealth] = useState<number>(MAX_HEALTH);
@@ -27,6 +31,12 @@ function Tree({ position }: TreeProps) {
 
   const handleHit = (event: React.MouseEvent) => {
     event.stopPropagation();
+
+    const treePos = new Vector3(...position);
+    if (camera.position.distanceTo(treePos) > MAX_CLICK_DISTANCE) {
+      return;
+    }
+
     play();
     setHealth((current) => {
       const newHealth = current - 1;
