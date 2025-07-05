@@ -1,12 +1,12 @@
 "use client";
 
-import { itemPickUp } from "@/lib/sfx";
+import { itemPickUp, grass1, grass2, grass3, grass4, grass5 } from "@/lib/sfx";
 import { pickUpItemToInventory } from "@/actions/pickup.action";
 import { usePlayerStore } from "@/stores/playerStore";
 import { useKeyboardControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { RigidBody, RapierRigidBody } from "@react-three/rapier";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import * as THREE from "three";
 import { useSound } from "use-sound";
 
@@ -23,13 +23,32 @@ const sidewaysDirectionVector = new THREE.Vector3();
 
 function Player({ position }: PlayerProps) {
   const [, getKeys] = useKeyboardControls();
-  const [play] = useSound(itemPickUp, { volume: 0.5 });
+  const [playPickup] = useSound(itemPickUp, { volume: 0.5 });
+  const [playGrass1] = useSound(grass1, { volume: 0.3 });
+  const [playGrass2] = useSound(grass2, { volume: 0.3 });
+  const [playGrass3] = useSound(grass3, { volume: 0.3 });
+  const [playGrass4] = useSound(grass4, { volume: 0.3 });
+  const [playGrass5] = useSound(grass5, { volume: 0.3 });
   const { camera } = useThree();
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const updateInventory = usePlayerStore((state) => state.updateInventory);
+  const [lastStepTime, setLastStepTime] = useState(0);
+
+  const grassSoundPlayers = [
+    playGrass1,
+    playGrass2,
+    playGrass3,
+    playGrass4,
+    playGrass5,
+  ];
+
+  const playRandomGrassSound = () => {
+    const randomIndex = Math.floor(Math.random() * grassSoundPlayers.length);
+    grassSoundPlayers[randomIndex]();
+  };
 
   const handleWoodPickup = async () => {
-    play();
+    playPickup();
     try {
       await pickUpItemToInventory({ wood: 1 });
       updateInventory({ wood: 1 });
@@ -72,6 +91,14 @@ function Player({ position }: PlayerProps) {
       },
       true
     );
+
+    if (forward || backward || leftward || rightward) {
+      const currentTime = state.clock.elapsedTime;
+      if (currentTime - lastStepTime > 0.4) {
+        playRandomGrassSound();
+        setLastStepTime(currentTime);
+      }
+    }
   });
 
   return (
